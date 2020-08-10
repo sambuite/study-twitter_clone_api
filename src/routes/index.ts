@@ -1,11 +1,13 @@
 import { Router } from 'express';
 
-import registerUserRouter from './registerUser.routes';
-import loginRouter from './login.routes';
-
 const routes = Router();
 
-routes.use('/login', loginRouter);
-routes.use('/register', registerUserRouter);
+routes.get('/login', (req, res) => {
+  return res.send('Hello World');
+});
+
+routes.get('/register', (req, res) => {
+  return res.send('Hello World');
+});
 
 export default routes;
