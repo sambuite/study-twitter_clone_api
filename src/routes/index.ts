@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import RegisterController from '@controllers/RegisterControllers';
 
 const routes = Router();
 
@@ -7,6 +6,8 @@ routes.post('/login', (req, res) => {
   return res.json({ message: 'Logged' });
 });
 
-routes.post('/register', RegisterController.create);
+routes.post('/register', (req, res) => {
+  return res.json({message: 'Ok'})
+});
 
 export default routes;
