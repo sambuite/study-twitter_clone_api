@@ -1,0 +1,17 @@
+{
+  "type": "default",
+  "host": "localhost",
+  "port": 1234,
+  "username": "default",
+  "password": "default",
+  "database": "default",
+  "synchronize": true,
+  "logging": false,
+  "entities": ["src/entities/**/*.ts"],
+  "migrations": ["src/database/migrations/**/*.ts"],
+  "subscribers": ["src/subscribers/**/*.ts"],
+  "cli": {
+    "migrationsDir": ["src/database/migrations/"],
+    "entitiesDir": "src/models"
+  }
+}
