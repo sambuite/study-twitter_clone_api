@@ -6,19 +6,21 @@ import {
   Param,
   Delete,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { TweetService } from './tweet.service';
 import Tweet from './tweet.model';
 import CreateTweetDTO from './dto/create-tweet.dto';
 import UpdateTweetDTO from './dto/update-tweet.dto';
+import GetTweetsFilteredDTO from './dto/get-tweets-filtered.dto';
 
 @Controller('tweet')
 export class TweetController {
   constructor(private tweetService: TweetService) {}
 
   @Get()
-  getAllTweets(): Tweet[] {
-    return this.tweetService.getAllTweets();
+  getTweets(@Query() getTweetsFilteredDTO: GetTweetsFilteredDTO): Tweet[] {
+    return this.tweetService.getTweetsFiltered(getTweetsFilteredDTO);
   }
 
   @Get(':id')

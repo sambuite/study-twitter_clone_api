@@ -5,6 +5,7 @@ import Tweet from './tweet.model';
 
 import CreateTweetDTO from './dto/create-tweet.dto';
 import UpdateTweetDTO from './dto/update-tweet.dto';
+import GetTweetsFilteredDTO from './dto/get-tweets-filtered.dto';
 
 @Injectable()
 export class TweetService {
@@ -12,6 +13,18 @@ export class TweetService {
 
   getAllTweets(): Tweet[] {
     return this.tweets;
+  }
+
+  getTweetsFiltered(getTweetsFilteredDTO: GetTweetsFilteredDTO): Tweet[] {
+    const { search } = getTweetsFilteredDTO;
+
+    const tweets = this.getAllTweets();
+
+    if (search) {
+      this.tweets = tweets.filter(tweet => tweet.text.includes(search));
+    }
+
+    return tweets;
   }
 
   getTweetById(id: string): Tweet {
