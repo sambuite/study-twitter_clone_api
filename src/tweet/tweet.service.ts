@@ -4,16 +4,21 @@ import { v1 as uuid } from 'uuid';
 import Tweet from './tweet.model';
 
 import CreateTweetDTO from './dto/create-tweet.dto';
+import UpdateTweetDTO from './dto/update-tweet.dto';
 
 @Injectable()
 export class TweetService {
   private tweets: Tweet[] = [];
 
-  getAllTweets() {
+  getAllTweets(): Tweet[] {
     return this.tweets;
   }
 
-  createTweet(createTweetDTO: CreateTweetDTO) {
+  getTweetById(id: string): Tweet {
+    return this.tweets.find(tweet => tweet.id === id);
+  }
+
+  createTweet(createTweetDTO: CreateTweetDTO): Tweet {
     const { text, media_url } = createTweetDTO;
 
     const tweet: Tweet = {
@@ -24,5 +29,17 @@ export class TweetService {
 
     this.tweets.push(tweet);
     return tweet;
+  }
+
+  updateTweet(updateTweetDTO: UpdateTweetDTO): Tweet {
+    const { id, field, fieldValue } = updateTweetDTO;
+    console.log({ id, field, fieldValue });
+    const tweet = this.getTweetById(id);
+    tweet[field] = fieldValue;
+    return tweet;
+  }
+
+  deleteTweetById(id: string): void {
+    this.tweets = this.tweets.filter(tweet => tweet.id !== id);
   }
 }
