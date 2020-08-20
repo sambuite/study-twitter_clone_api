@@ -1,4 +1,5 @@
 export default class Tweet {
   id: string;
-  content: string;
+  text: string;
+  media_url: string;
 }
