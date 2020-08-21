@@ -1,66 +1,59 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { v1 as uuid } from 'uuid';
-
-import Tweet from './tweet.model';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Like } from 'typeorm';
 
 import CreateTweetDTO from './dto/create-tweet.dto';
 import UpdateTweetDTO from './dto/update-tweet.dto';
 import GetTweetsFilteredDTO from './dto/get-tweets-filtered.dto';
 
+import Tweet from './tweet.entity';
+import TweetRepository from './tweet.repository';
+
 @Injectable()
 export class TweetService {
-  private tweets: Tweet[] = [];
+  constructor(
+    @InjectRepository(TweetRepository)
+    private tweetRepository: TweetRepository
+  ) {}
 
-  getAllTweets(): Tweet[] {
-    return this.tweets;
-  }
+  async getTweetById(id: string): Promise<Tweet> {
+    const tweet = await this.tweetRepository.findOne(id);
 
-  getTweetsFiltered(getTweetsFilteredDTO: GetTweetsFilteredDTO): Tweet[] {
-    const { search } = getTweetsFilteredDTO;
-
-    let tweetsFiltered = this.getAllTweets();
-
-    if (search) {
-      tweetsFiltered = tweetsFiltered.filter(tweet =>
-        tweet.text.includes(search)
-      );
-    }
-
-    return tweetsFiltered;
-  }
-
-  getTweetById(id: string): Tweet {
-    const found = this.tweets.find(tweet => tweet.id === id);
-
-    if (!found) {
+    if (!tweet) {
       throw new NotFoundException(`Tweet with id ${id} was not found`);
     }
 
-    return found;
-  }
-
-  createTweet(createTweetDTO: CreateTweetDTO): Tweet {
-    const { text, media_url } = createTweetDTO;
-
-    const tweet: Tweet = {
-      id: uuid(),
-      text,
-      media_url,
-    };
-
-    this.tweets.push(tweet);
     return tweet;
   }
 
-  updateTweet(updateTweetDTO: UpdateTweetDTO): Tweet {
-    const { id, field, fieldValue } = updateTweetDTO;
-    const tweetToBeUpdated = this.getTweetById(id);
-    tweetToBeUpdated[field] = fieldValue;
-    return tweetToBeUpdated;
+  async createTweet(createTweetDTO: CreateTweetDTO): Promise<Tweet> {
+    return this.tweetRepository.createTweet(createTweetDTO);
   }
 
-  deleteTweetById(id: string): void {
-    const tweetToBeDeleted = this.getTweetById(id);
-    this.tweets = this.tweets.filter(tweet => tweet !== tweetToBeDeleted);
+  async deleteTweetById(id: string): Promise<void> {
+    await (await this.getTweetById(id)).remove();
+  }
+
+  async updateTweet(updateTweetDTO: UpdateTweetDTO): Promise<Tweet> {
+    const { field, fieldValue, id } = updateTweetDTO;
+    const tweetUpdated = await this.getTweetById(id);
+    tweetUpdated[field] = fieldValue;
+    await tweetUpdated.save();
+
+    return tweetUpdated;
+  }
+
+  async getAllTweets(): Promise<Tweet[]> {
+    return await this.tweetRepository.find();
+  }
+
+  async getTweetsFiltered(
+    getTweetsFilteredDTO: GetTweetsFilteredDTO
+  ): Promise<Tweet[]> {
+    const tweetsFiltered = this.tweetRepository.getTweetsFiltered(
+      getTweetsFilteredDTO
+    );
+
+    return tweetsFiltered;
   }
 }

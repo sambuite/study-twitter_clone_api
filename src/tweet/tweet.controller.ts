@@ -11,7 +11,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { TweetService } from './tweet.service';
-import Tweet from './tweet.model';
+import Tweet from './tweet.entity';
 import CreateTweetDTO from './dto/create-tweet.dto';
 import UpdateTweetDTO from './dto/update-tweet.dto';
 import GetTweetsFilteredDTO from './dto/get-tweets-filtered.dto';
@@ -22,18 +22,20 @@ export class TweetController {
   constructor(private tweetService: TweetService) {}
 
   @Get()
-  getTweets(@Query() getTweetsFilteredDTO: GetTweetsFilteredDTO): Tweet[] {
+  getTweets(
+    @Query() getTweetsFilteredDTO: GetTweetsFilteredDTO
+  ): Promise<Tweet[]> {
     return this.tweetService.getTweetsFiltered(getTweetsFilteredDTO);
   }
 
   @Get(':id')
-  getTweetById(@Param('id') id: string): Tweet {
+  getTweetById(@Param('id') id: string): Promise<Tweet> {
     return this.tweetService.getTweetById(id);
   }
 
   @Post()
   @UsePipes(ValidationPipe)
-  createTweet(@Body() createTweetDTO: CreateTweetDTO): Tweet {
+  createTweet(@Body() createTweetDTO: CreateTweetDTO): Promise<Tweet> {
     return this.tweetService.createTweet(createTweetDTO);
   }
 
@@ -42,12 +44,12 @@ export class TweetController {
   updateTweet(
     @Body(TweetUpdateValidationPipe)
     updateTweetDTO: UpdateTweetDTO
-  ) {
-    this.tweetService.updateTweet(updateTweetDTO);
+  ): Promise<Tweet> {
+    return this.tweetService.updateTweet(updateTweetDTO);
   }
 
   @Delete(':id')
-  deleteTweetById(@Param('id') id: string): void {
-    this.tweetService.deleteTweetById(id);
+  deleteTweetById(@Param('id') id: string): Promise<void> {
+    return this.tweetService.deleteTweetById(id);
   }
 }
