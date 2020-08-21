@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { v1 as uuid } from 'uuid';
 
 import Tweet from './tweet.model';
@@ -30,7 +30,13 @@ export class TweetService {
   }
 
   getTweetById(id: string): Tweet {
-    return this.tweets.find(tweet => tweet.id === id);
+    const found = this.tweets.find(tweet => tweet.id === id);
+
+    if (!found) {
+      throw new NotFoundException(`Tweet with id ${id} was not found`);
+    }
+
+    return found;
   }
 
   createTweet(createTweetDTO: CreateTweetDTO): Tweet {
@@ -48,13 +54,13 @@ export class TweetService {
 
   updateTweet(updateTweetDTO: UpdateTweetDTO): Tweet {
     const { id, field, fieldValue } = updateTweetDTO;
-    console.log({ id, field, fieldValue });
-    const tweet = this.getTweetById(id);
-    tweet[field] = fieldValue;
-    return tweet;
+    const tweetToBeUpdated = this.getTweetById(id);
+    tweetToBeUpdated[field] = fieldValue;
+    return tweetToBeUpdated;
   }
 
   deleteTweetById(id: string): void {
-    this.tweets = this.tweets.filter(tweet => tweet.id !== id);
+    const tweetToBeDeleted = this.getTweetById(id);
+    this.tweets = this.tweets.filter(tweet => tweet !== tweetToBeDeleted);
   }
 }

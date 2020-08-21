@@ -15,6 +15,7 @@ import Tweet from './tweet.model';
 import CreateTweetDTO from './dto/create-tweet.dto';
 import UpdateTweetDTO from './dto/update-tweet.dto';
 import GetTweetsFilteredDTO from './dto/get-tweets-filtered.dto';
+import TweetUpdateValidationPipe from './pipes/update-tweet-validation.pipe';
 
 @Controller('tweet')
 export class TweetController {
@@ -37,8 +38,9 @@ export class TweetController {
   }
 
   @Patch()
+  @UsePipes(ValidationPipe)
   updateTweet(
-    @Body()
+    @Body(TweetUpdateValidationPipe)
     updateTweetDTO: UpdateTweetDTO
   ) {
     this.tweetService.updateTweet(updateTweetDTO);
