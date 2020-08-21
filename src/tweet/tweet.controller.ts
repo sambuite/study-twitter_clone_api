@@ -7,6 +7,8 @@ import {
   Delete,
   Patch,
   Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { TweetService } from './tweet.service';
 import Tweet from './tweet.model';
@@ -29,6 +31,7 @@ export class TweetController {
   }
 
   @Post()
+  @UsePipes(ValidationPipe)
   createTweet(@Body() createTweetDTO: CreateTweetDTO): Tweet {
     return this.tweetService.createTweet(createTweetDTO);
   }
