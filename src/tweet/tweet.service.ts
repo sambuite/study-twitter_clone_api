@@ -18,13 +18,15 @@ export class TweetService {
   getTweetsFiltered(getTweetsFilteredDTO: GetTweetsFilteredDTO): Tweet[] {
     const { search } = getTweetsFilteredDTO;
 
-    const tweets = this.getAllTweets();
+    let tweetsFiltered = this.getAllTweets();
 
     if (search) {
-      this.tweets = tweets.filter(tweet => tweet.text.includes(search));
+      tweetsFiltered = tweetsFiltered.filter(tweet =>
+        tweet.text.includes(search)
+      );
     }
 
-    return tweets;
+    return tweetsFiltered;
   }
 
   getTweetById(id: string): Tweet {
