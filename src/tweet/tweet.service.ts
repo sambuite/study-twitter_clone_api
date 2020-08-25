@@ -27,7 +27,7 @@ export class TweetService {
   }
 
   async createTweet(createTweetDTO: CreateTweetDTO): Promise<Tweet> {
-    return this.tweetRepository.createTweet(createTweetDTO);
+    return await this.tweetRepository.createTweet(createTweetDTO);
   }
 
   async deleteTweetById(id: string): Promise<void> {
@@ -50,7 +50,7 @@ export class TweetService {
   async getTweetsFiltered(
     getTweetsFilteredDTO: GetTweetsFilteredDTO
   ): Promise<Tweet[]> {
-    const tweetsFiltered = this.tweetRepository.getTweetsFiltered(
+    const tweetsFiltered = await this.tweetRepository.getTweetsFiltered(
       getTweetsFilteredDTO
     );
 
