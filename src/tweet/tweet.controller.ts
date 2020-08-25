@@ -9,6 +9,7 @@ import {
   Query,
   UsePipes,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { TweetService } from './tweet.service';
 import Tweet from './tweet.entity';
@@ -16,8 +17,10 @@ import CreateTweetDTO from './dto/create-tweet.dto';
 import UpdateTweetDTO from './dto/update-tweet.dto';
 import GetTweetsFilteredDTO from './dto/get-tweets-filtered.dto';
 import TweetUpdateValidationPipe from './pipes/update-tweet-validation.pipe';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('tweet')
+@UseGuards(AuthGuard())
 export class TweetController {
   constructor(private tweetService: TweetService) {}
 
