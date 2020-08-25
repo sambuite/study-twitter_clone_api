@@ -13,5 +13,8 @@ export default class User extends BaseEntity {
   password: string;
 
   @Column()
+  passwordSalt: string;
+
+  @Column()
   birthday: string;
 }
