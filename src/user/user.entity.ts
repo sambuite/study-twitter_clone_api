@@ -1,6 +1,7 @@
-import { BaseEntity, Entity, PrimaryColumn, Column } from 'typeorm';
+import { BaseEntity, Entity, PrimaryColumn, Column, Unique } from 'typeorm';
 
 @Entity()
+@Unique(['nickname'])
 export default class User extends BaseEntity {
   @PrimaryColumn()
   id: string;
@@ -12,5 +13,5 @@ export default class User extends BaseEntity {
   password: string;
 
   @Column()
-  birthday: Date;
+  birthday: string;
 }
