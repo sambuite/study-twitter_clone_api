@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 
 export default class AuthSignInCredentialsDTO {
   @IsNotEmpty()
-  username: string;
+  nickname: string;
 
   @IsNotEmpty()
   password: string;

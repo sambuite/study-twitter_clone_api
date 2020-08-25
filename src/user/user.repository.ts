@@ -3,6 +3,7 @@ import { v1 as uuid } from 'uuid';
 import * as bcrypt from 'bcrypt';
 
 import AuthSignUpCredentialsDTO from '../auth/dto/auth-sign-up-credentials.dto';
+import AuthSignInCredentialsDTO from 'src/auth/dto/auth-sign-in-credentials.dto';
 
 import User from './user.entity';
 import {
@@ -30,6 +31,20 @@ export default class UserRepository extends Repository<User> {
       } else {
         throw new InternalServerErrorException();
       }
+    }
+  }
+
+  async validateUserPassword(
+    authSignInCredentials: AuthSignInCredentialsDTO
+  ): Promise<string> {
+    const { nickname, password } = authSignInCredentials;
+
+    const user = await this.findOne({ nickname });
+
+    if (user && (await user.validatePassword(password))) {
+      return user.nickname;
+    } else {
+      return null;
     }
   }
 

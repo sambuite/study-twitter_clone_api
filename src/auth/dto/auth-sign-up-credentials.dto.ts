@@ -1,10 +1,4 @@
-import {
-  IsString,
-  MinLength,
-  MaxLength,
-  IsDate,
-  Matches,
-} from 'class-validator';
+import { IsString, MinLength, MaxLength, Matches } from 'class-validator';
 
 export default class AuthSignUpCredentialsDTO {
   @IsString()
