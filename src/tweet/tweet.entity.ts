@@ -18,4 +18,7 @@ export default class Tweet extends BaseEntity {
     { eager: false }
   )
   user: User;
+
+  @Column()
+  userId: number;
 }

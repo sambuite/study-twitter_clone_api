@@ -17,8 +17,10 @@ export class TweetService {
     private tweetRepository: TweetRepository
   ) {}
 
-  async getTweetById(id: string): Promise<Tweet> {
-    const tweet = await this.tweetRepository.findOne(id);
+  async getTweetById(id: string, user: User): Promise<Tweet> {
+    const tweet = await this.tweetRepository.findOne({
+      where: { id, userId: user.id },
+    });
 
     if (!tweet) {
       throw new NotFoundException(`Tweet with id ${id} was not found`);
@@ -34,13 +36,16 @@ export class TweetService {
     return await this.tweetRepository.createTweet(createTweetDTO, user);
   }
 
-  async deleteTweetById(id: string): Promise<void> {
-    await (await this.getTweetById(id)).remove();
+  async deleteTweetById(id: string, user: User): Promise<void> {
+    await (await this.getTweetById(id, user)).remove();
   }
 
-  async updateTweet(updateTweetDTO: UpdateTweetDTO): Promise<Tweet> {
+  async updateTweet(
+    updateTweetDTO: UpdateTweetDTO,
+    user: User
+  ): Promise<Tweet> {
     const { field, fieldValue, id } = updateTweetDTO;
-    const tweetUpdated = await this.getTweetById(id);
+    const tweetUpdated = await this.getTweetById(id, user);
     tweetUpdated[field] = fieldValue;
     await tweetUpdated.save();
 

@@ -34,8 +34,8 @@ export class TweetController {
   }
 
   @Get(':id')
-  getTweetById(@Param('id') id: string): Promise<Tweet> {
-    return this.tweetService.getTweetById(id);
+  getTweetById(@Param('id') id: string, @GetUser() user: User): Promise<Tweet> {
+    return this.tweetService.getTweetById(id, user);
   }
 
   @Post()
@@ -51,13 +51,17 @@ export class TweetController {
   @UsePipes(ValidationPipe)
   updateTweet(
     @Body(TweetUpdateValidationPipe)
-    updateTweetDTO: UpdateTweetDTO
+    updateTweetDTO: UpdateTweetDTO,
+    @GetUser() user: User
   ): Promise<Tweet> {
-    return this.tweetService.updateTweet(updateTweetDTO);
+    return this.tweetService.updateTweet(updateTweetDTO, user);
   }
 
   @Delete(':id')
-  deleteTweetById(@Param('id') id: string): Promise<void> {
-    return this.tweetService.deleteTweetById(id);
+  deleteTweetById(
+    @Param('id') id: string,
+    @GetUser() user: User
+  ): Promise<void> {
+    return this.tweetService.deleteTweetById(id, user);
   }
 }

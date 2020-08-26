@@ -4,9 +4,12 @@ import Tweet from './tweet.entity';
 import CreateTweetDTO from './dto/create-tweet.dto';
 import GetTweetsFilteredDTO from './dto/get-tweets-filtered.dto';
 import User from 'src/user/user.entity';
+import { InternalServerErrorException, Logger } from '@nestjs/common';
 
 @EntityRepository(Tweet)
 export default class TweetRepository extends Repository<Tweet> {
+  private logger = new Logger();
+
   async createTweet(
     createTweetDTO: CreateTweetDTO,
     user: User
@@ -18,10 +21,21 @@ export default class TweetRepository extends Repository<Tweet> {
     tweet.media_url = media_url;
     tweet.text = text;
     tweet.user = user;
-    await tweet.save();
-    delete tweet.user;
-    delete tweet.id;
-    return tweet;
+
+    try {
+      await tweet.save();
+      delete tweet.user;
+      delete tweet.id;
+      return tweet;
+    } catch (error) {
+      this.logger.error(
+        `Failed to create a tweet for user ${
+          user.nickname
+        }, Data: ${JSON.stringify(createTweetDTO)}`,
+        error.stack
+      );
+      throw new InternalServerErrorException();
+    }
   }
 
   async getTweetsFiltered(
@@ -29,29 +43,24 @@ export default class TweetRepository extends Repository<Tweet> {
   ): Promise<Tweet[]> {
     const { search } = getTweetsFilteredDTO;
 
-    /* 
-      ****An Alternative Way
-    
     const query = this.createQueryBuilder('tweet');
 
     if (search) {
       query.andWhere('tweet.text LIKE :search', { search: `%${search}%` });
     }
 
-    const tweetsFiltered = await query.getMany();
-    
-    */
+    try {
+      const tweetsFiltered = await query.getMany();
 
-    let tweetsFiltered: Tweet[];
-
-    if (search) {
-      tweetsFiltered = await this.find({
-        where: { text: Like(`%${search}%`) },
-      });
-    } else {
-      tweetsFiltered = await this.find();
+      return tweetsFiltered;
+    } catch (error) {
+      this.logger.error(
+        `Failed to get the tweet. Filter ${JSON.stringify(
+          getTweetsFilteredDTO
+        )}`,
+        error.stack
+      );
+      throw new InternalServerErrorException();
     }
-
-    return tweetsFiltered;
   }
 }
