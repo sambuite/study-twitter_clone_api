@@ -8,6 +8,7 @@ import GetTweetsFilteredDTO from './dto/get-tweets-filtered.dto';
 
 import Tweet from './tweet.entity';
 import TweetRepository from './tweet.repository';
+import User from 'src/user/user.entity';
 
 @Injectable()
 export class TweetService {
@@ -26,8 +27,11 @@ export class TweetService {
     return tweet;
   }
 
-  async createTweet(createTweetDTO: CreateTweetDTO): Promise<Tweet> {
-    return await this.tweetRepository.createTweet(createTweetDTO);
+  async createTweet(
+    createTweetDTO: CreateTweetDTO,
+    user: User
+  ): Promise<Tweet> {
+    return await this.tweetRepository.createTweet(createTweetDTO, user);
   }
 
   async deleteTweetById(id: string): Promise<void> {

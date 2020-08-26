@@ -18,6 +18,8 @@ import UpdateTweetDTO from './dto/update-tweet.dto';
 import GetTweetsFilteredDTO from './dto/get-tweets-filtered.dto';
 import TweetUpdateValidationPipe from './pipes/update-tweet-validation.pipe';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
+import User from 'src/user/user.entity';
 
 @Controller('tweet')
 @UseGuards(AuthGuard())
@@ -38,8 +40,11 @@ export class TweetController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  createTweet(@Body() createTweetDTO: CreateTweetDTO): Promise<Tweet> {
-    return this.tweetService.createTweet(createTweetDTO);
+  createTweet(
+    @Body() createTweetDTO: CreateTweetDTO,
+    @GetUser() user: User
+  ): Promise<Tweet> {
+    return this.tweetService.createTweet(createTweetDTO, user);
   }
 
   @Patch()

@@ -1,5 +1,14 @@
-import { BaseEntity, Entity, PrimaryColumn, Column, Unique } from 'typeorm';
+import {
+  BaseEntity,
+  Entity,
+  PrimaryColumn,
+  Column,
+  Unique,
+  OneToMany,
+} from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import Tweet from 'src/tweet/tweet.entity';
+import { type } from 'os';
 
 @Entity()
 @Unique(['nickname'])
@@ -18,6 +27,13 @@ export default class User extends BaseEntity {
 
   @Column()
   birthday: string;
+
+  @OneToMany(
+    type => Tweet,
+    tweet => tweet.user,
+    { eager: true }
+  )
+  tweets: Tweet[];
 
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.passwordSalt);
